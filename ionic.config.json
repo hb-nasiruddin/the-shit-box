@@ -1,0 +1,8 @@
+{
+  "name": "The Shit Box",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react-vite",
+  "id": "4950a7a5"
+}
