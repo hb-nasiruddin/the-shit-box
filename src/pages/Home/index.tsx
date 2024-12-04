@@ -6,6 +6,7 @@ import {
   add,
   trashBin,
   globe,
+  removeSharp
 } from 'ionicons/icons';
 
 import './style.css';
@@ -62,7 +63,7 @@ export const HomePage: React.FC = () => {
 
   // Add new section
   const addOrder = () => {
-    setOrders([...orders, { symbol: '', action: '' }]);
+    setOrders([...orders, { symbol: '', action: 'BUY' }]);
   };
 
   // Delete section
@@ -327,8 +328,17 @@ export const HomePage: React.FC = () => {
                       color="danger"
                     // onClick={() => removeOrder(index)}
                     >
-                      <IonIcon icon={trashBin} slot="start" />
+                      <IonIcon icon={removeSharp} slot="start" />
                       LX
+                    </IonButton>
+                  </IonCol>
+                  <IonCol>
+                    <IonButton
+                      expand="block"
+                      color="secondary"
+                    // onClick={() => removeOrder(index)}
+                    >
+                      <IonIcon icon={trashBin} slot="start" />                      
                     </IonButton>
                   </IonCol>
                 </IonRow>
