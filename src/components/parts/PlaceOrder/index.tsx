@@ -21,8 +21,8 @@ import {
   removeSharp
 } from 'ionicons/icons';
 
-import { TradeDetails } from '../utils/interface';
-import { placeOrder } from '../services/orders';
+import { TradeDetails } from '../../utils/interface';
+import { placeOrder } from '../../services/orders';
 
 type Props = {
   apiUrl: string;
