@@ -1,5 +1,5 @@
-import axios from "axios";
-import { TradeDetails } from "../utils/interface";
+import axios from 'axios';
+import { TradeDetails } from '@utils/interface';
 
 /**
  * Place a smart order
@@ -13,20 +13,22 @@ import { TradeDetails } from "../utils/interface";
  * @param {string} tradeDetails.hostUrl - API host URL
  * @returns {Promise<string>} - API response
  */
-export const placeOrder = async (tradeDetails: TradeDetails): Promise<string> => {
+export const placeOrder = async (
+  tradeDetails: TradeDetails
+): Promise<string> => {
   try {
     const endpoint = `${tradeDetails.hostUrl}/api/v1/placesmartorder`;
 
     const payload = {
       apikey: tradeDetails.apiKey,
-      strategy: "FastScalper",
+      strategy: 'FastScalper',
       symbol: tradeDetails.symbol,
       action: tradeDetails.action,
       exchange: tradeDetails.exchange,
-      pricetype: "MARKET",
+      pricetype: 'MARKET',
       product: tradeDetails.product,
       quantity: tradeDetails.quantity,
-      position_size: "0",
+      position_size: '0',
     };
 
     const response = await axios.post(endpoint, payload, {
@@ -172,4 +174,8 @@ export const cancelAllOrders = async (cancelDetails: {
 
 export default {
   placeOrder,
-}
+  modifyOrder,
+  cancelOrder,
+  closePosition,
+  cancelAllOrders,
+};

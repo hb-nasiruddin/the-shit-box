@@ -16,19 +16,18 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "paths": {
-      "@/*": ["./src/*"],
+      "@assets/*": ["./src/assets/*"],
       "@components/*": ["./src/components/*"],
       "@core/*": ["./src/components/core/*"],
       "@part/*": ["./src/components/part/*"],
       "@templates/*": ["./src/components/templates/*"],
-
-      "@assets/*": ["./src/assets/*"],
       "@config/*": ["./src/config/*"],
       "@contexts/*": ["./src/contexts/*"],
       "@pages/*": ["./src/pages/*"],
-      "@styles/*": ["./src/styles/*"],
+      "@services/*": ["./src/services/*"],
       "@theme/*": ["./src/theme/*"],
-      "@utils/*": ["./src/utils/*"]
+      "@utils/*": ["./src/utils/*"],
+      "@/*": ["./src/*"],
     }
   },
   "include": ["src"],
