@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode, useCallback, useMemo } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useCallback, useMemo, useEffect } from 'react';
 import * as OrderServices from '@services/Orders';
 import { TradeDetails } from '@utils/interface';
 
@@ -26,6 +26,9 @@ interface OrdersContextProps {
     hostUrl: string;
   }) => Promise<string>;
 
+  addOrder: () => void;
+  deleteOrder: (index: number) => void;
+
   apiUrl: string;
   setApiUrl: React.Dispatch<React.SetStateAction<string>>;
   apiKey: string;
@@ -49,16 +52,21 @@ export const OrdersProvider: React.FC<OrdersProviderProps> = ({ children }) => {
   const [apiUrl, setApiUrl] = useState<string>("");
   const [apiKey, setApiKey] = useState<string>("");
   const [strategy, setStrategy] = useState<string>("");
-  const [orders, setOrders] = useState<Array<any>>([]);
+  const [orders, setOrders] = useState<Array<TradeDetails>>([]);
   const [hostUrl, setHostUrl] = useState<string>("");
 
   // Service functions using useCallback
   const placeOrder = useCallback(
     async (tradeDetails: TradeDetails) => {
-      const response = await OrderServices.placeOrder(tradeDetails);
-      // Update orders state on successful order placement
-      setOrders((prevOrders) => [...prevOrders, { ...tradeDetails, response }]);
-      return response;
+      try {
+        const data = await OrderServices.placeOrder(tradeDetails);
+        console.log("Order Placed data", data);
+        // Update orders state on successful order placement
+        // setOrders((prevOrders) => [...prevOrders, { ...tradeDetails, data }]);
+        return data;
+      } catch (error) {
+        console.log("Error placing order", error);
+      }
     },
     [setOrders]
   );
@@ -113,6 +121,56 @@ export const OrdersProvider: React.FC<OrdersProviderProps> = ({ children }) => {
     [setOrders]
   );
 
+
+  const addOrder = useCallback(() => {
+    setOrders([
+      ...orders,
+      {
+        symbol: '',
+        action: 'BUY',
+        exchange: 'NSE',
+        quantity: 25,
+        product: 'MIS',
+        pricetype: 'MARKET',
+        price: 0,
+      },
+    ]);
+  }, [setOrders, orders]);
+
+
+  const deleteOrder = useCallback((index: number) => {
+    const newOrders = orders.filter((_, i) => i !== index);
+    setOrders(newOrders);
+  }, [setOrders, orders]);
+
+
+  // Hooks
+  // Fetch data from local storage
+  useEffect(() => {
+    const fetchData = async () => {
+      const storedApiUrl = localStorage.getItem('apiUrl');
+      const storedApiKey = localStorage.getItem('apiKey');
+      const storeStrategy = localStorage.getItem('strategy');
+      const storedActiveSection = localStorage.getItem('orders');
+
+      if (storedApiUrl) setApiUrl(storedApiUrl);
+      if (storedApiKey) setApiKey(storedApiKey);
+      if (storeStrategy) setStrategy(storeStrategy);
+      if (storedActiveSection) setOrders(JSON.parse(storedActiveSection));
+    };
+
+    fetchData();
+  }, []);
+
+
+  // Save data to local storage
+  useEffect(() => {
+    localStorage.setItem('apiUrl', apiUrl);
+    localStorage.setItem('apiKey', apiKey);
+    localStorage.setItem('strategy', strategy);
+    localStorage.setItem('orders', JSON.stringify(orders));
+  }, [apiUrl, apiKey, strategy, orders]);
+
   // Memoized context value
   const contextValue = useMemo(
     () => ({
@@ -121,6 +179,8 @@ export const OrdersProvider: React.FC<OrdersProviderProps> = ({ children }) => {
       cancelOrder,
       closePosition,
       cancelAllOrders,
+      addOrder,
+      deleteOrder,
       apiUrl,
       setApiUrl,
       apiKey,
@@ -138,6 +198,8 @@ export const OrdersProvider: React.FC<OrdersProviderProps> = ({ children }) => {
       cancelOrder,
       closePosition,
       cancelAllOrders,
+      addOrder,
+      deleteOrder,
       apiUrl,
       setApiUrl,
       apiKey,

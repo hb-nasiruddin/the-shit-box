@@ -45,12 +45,17 @@ import './theme/variables.css';
 
 /* Internal Pages */
 import AppLayout from './components/templates/AppLayout';
+import { AppContextProvider } from '@contexts/AppContext';
 
-setupIonicReact();
+setupIonicReact({
+  rippleEffect: false
+});
 
 const App: React.FC = () => (
   <IonApp>
-    <AppLayout />
+    <AppContextProvider>
+      <AppLayout />
+    </AppContextProvider>
   </IonApp>
 );
 

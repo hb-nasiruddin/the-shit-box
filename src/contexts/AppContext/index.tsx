@@ -1,3 +1,4 @@
+import { OrdersProvider } from '@contexts/Orders';
 import React, { createContext, useContext, useReducer, ReactNode, Dispatch } from 'react';
 
 // Define the shape of your context state
@@ -48,12 +49,14 @@ const AppContext = createContext<{
 });
 
 // Create a provider component
-export const AppProvider = ({ children }: { children: ReactNode }) => {
+export const AppContextProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(appReducer, initialState);
 
   return (
     <AppContext.Provider value={{ state, dispatch }}>
-      {children}
+      <OrdersProvider>
+        {children}
+      </OrdersProvider>
     </AppContext.Provider>
   );
 };

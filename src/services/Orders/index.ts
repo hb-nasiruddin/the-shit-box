@@ -4,7 +4,7 @@ import { TradeDetails } from '@utils/interface';
 /**
  * Place a smart order
  * @param {object} tradeDetails - Details of the trade
- * @param {string} tradeDetails.apiKey - API Key for authentication
+ * @param {string} tradeDetails.apikey - API Key for authentication
  * @param {string} tradeDetails.symbol - Trading symbol
  * @param {string} tradeDetails.action - Action (e.g., BUY/SELL)
  * @param {string} tradeDetails.exchange - Exchange (e.g., NSE, BSE)
@@ -20,15 +20,15 @@ export const placeOrder = async (
     const endpoint = `${tradeDetails.hostUrl}/api/v1/placesmartorder`;
 
     const payload = {
-      apikey: tradeDetails.apiKey,
-      strategy: 'FastScalper',
+      apikey: tradeDetails.apikey,
+      strategy: tradeDetails.strategy,
+      exchange: tradeDetails.exchange,
       symbol: tradeDetails.symbol,
       action: tradeDetails.action,
-      exchange: tradeDetails.exchange,
-      pricetype: 'MARKET',
       product: tradeDetails.product,
+      pricetype: tradeDetails.pricetype,
       quantity: tradeDetails.quantity,
-      position_size: '0',
+      price: tradeDetails.price,
     };
 
     const response = await axios.post(endpoint, payload, {
@@ -52,23 +52,23 @@ export const placeOrder = async (
 /**
  * Modify an existing order
  * @param {object} modifyDetails - Details for modifying the order
- * @param {string} modifyDetails.apiKey - API Key for authentication
- * @param {string} modifyDetails.orderId - ID of the order to modify
+ * @param {string} modifyDetails.apikey - API Key for authentication
+ * @param {string} modifyDetails.orderid - ID of the order to modify
  * @param {number} modifyDetails.price - New price
  * @param {string} modifyDetails.hostUrl - API host URL
  * @returns {Promise<string>} - API response
  */
 export const modifyOrder = async (modifyDetails: {
-  apiKey: string;
-  orderId: string;
+  apikey: string;
+  orderid: string;
   price: number;
   hostUrl: string;
 }): Promise<string> => {
   try {
     const endpoint = `${modifyDetails.hostUrl}/api/v1/modifyorder`;
     const payload = {
-      apikey: modifyDetails.apiKey,
-      order_id: modifyDetails.orderId,
+      apikey: modifyDetails.apikey,
+      orderid: modifyDetails.orderid,
       price: modifyDetails.price,
     };
 
@@ -85,21 +85,21 @@ export const modifyOrder = async (modifyDetails: {
 /**
  * Cancel an order
  * @param {object} cancelDetails - Details of the order to cancel
- * @param {string} cancelDetails.apiKey - API Key for authentication
- * @param {string} cancelDetails.orderId - ID of the order to cancel
+ * @param {string} cancelDetails.apikey - API Key for authentication
+ * @param {string} cancelDetails.orderid - ID of the order to cancel
  * @param {string} cancelDetails.hostUrl - API host URL
  * @returns {Promise<string>} - API response
  */
 export const cancelOrder = async (cancelDetails: {
-  apiKey: string;
-  orderId: string;
+  apikey: string;
+  orderid: string;
   hostUrl: string;
 }): Promise<string> => {
   try {
     const endpoint = `${cancelDetails.hostUrl}/api/v1/cancelorder`;
     const payload = {
-      apikey: cancelDetails.apiKey,
-      order_id: cancelDetails.orderId,
+      apikey: cancelDetails.apikey,
+      orderid: cancelDetails.orderid,
     };
 
     const response = await axios.post(endpoint, payload, {
@@ -115,14 +115,14 @@ export const cancelOrder = async (cancelDetails: {
 /**
  * Close a position
  * @param {object} closeDetails - Details of the position to close
- * @param {string} closeDetails.apiKey - API Key for authentication
+ * @param {string} closeDetails.apikey - API Key for authentication
  * @param {string} closeDetails.symbol - Trading symbol
  * @param {string} closeDetails.exchange - Exchange (e.g., NSE, BSE)
  * @param {string} closeDetails.hostUrl - API host URL
  * @returns {Promise<string>} - API response
  */
 export const closePosition = async (closeDetails: {
-  apiKey: string;
+  apikey: string;
   symbol: string;
   exchange: string;
   hostUrl: string;
@@ -130,7 +130,7 @@ export const closePosition = async (closeDetails: {
   try {
     const endpoint = `${closeDetails.hostUrl}/api/v1/closeposition`;
     const payload = {
-      apikey: closeDetails.apiKey,
+      apikey: closeDetails.apikey,
       symbol: closeDetails.symbol,
       exchange: closeDetails.exchange,
     };
@@ -148,18 +148,18 @@ export const closePosition = async (closeDetails: {
 /**
  * Cancel all active orders
  * @param {object} cancelDetails - Details for canceling all orders
- * @param {string} cancelDetails.apiKey - API Key for authentication
+ * @param {string} cancelDetails.apikey - API Key for authentication
  * @param {string} cancelDetails.hostUrl - API host URL
  * @returns {Promise<string>} - API response
  */
 export const cancelAllOrders = async (cancelDetails: {
-  apiKey: string;
+  apikey: string;
   hostUrl: string;
 }): Promise<string> => {
   try {
     const endpoint = `${cancelDetails.hostUrl}/api/v1/cancelallorders`;
     const payload = {
-      apikey: cancelDetails.apiKey,
+      apikey: cancelDetails.apikey,
     };
 
     const response = await axios.post(endpoint, payload, {

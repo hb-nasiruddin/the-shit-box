@@ -1,14 +1,20 @@
 // Define the structure for trade details
 interface TradeDetails {
-  action: string;
-  symbol: string;
-  quantity: string;
-  apiKey: string;
+  index?: number;
+  orderid?: string;
+  hostUrl?: string;
+
+  apikey: string;
+  strategy: string;
   exchange: string;
+  symbol: string;
+  action: string;
   product: string;
-  hostUrl: string;
+  pricetype: string;
+  quantity: string;
+  price?: string;
+  trigger_price?: string;
+  disclosed_quantity?: string;
 }
 
-export type{ 
-  TradeDetails
-};
+export type { TradeDetails };
