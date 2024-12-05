@@ -26,7 +26,10 @@ export const priceTypes = {
   SL: 'SL',
   SL_M: 'SL-M',
 }
-export const actions = ['BUY', 'SELL'];
+export const actions = {
+  BUY: 'BUY',
+  SELL: 'SELL',
+}
 
 export default {
   appRoute,

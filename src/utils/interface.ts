@@ -2,7 +2,7 @@
 interface TradeDetails {
   index?: number;
   orderid?: string;
-  hostUrl?: string;
+  apiUrl?: string;
 
   apikey: string;
   strategy: string;
@@ -11,8 +11,8 @@ interface TradeDetails {
   action: string;
   product: string;
   pricetype: string;
-  quantity: string;
-  price?: string;
+  quantity: number | string;
+  price?: string | number;
   trigger_price?: string;
   disclosed_quantity?: string;
 }
