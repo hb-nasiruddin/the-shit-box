@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   IonButton,
   IonCard,
@@ -20,7 +20,7 @@ import { add, trashBin, removeSharp } from 'ionicons/icons';
 import { TradeDetails } from '@utils/interface';
 import { placeOrder } from '@services/Orders';
 import { useOrders } from '@contexts/Orders';
-import { priceTypes, productsType } from '@utils/constant';
+import { DEFAULT_ORDER_DETAILS, priceTypes, productsType } from '@utils/constant';
 
 type Props = {
   index: number;
@@ -34,23 +34,10 @@ export function PlaceOrder({ index }: Props) {
     deleteOrder,
   } = useOrders();
 
-  const [order, setOrder] = useState<TradeDetails>({
-    action: '',
-    symbol: '',
-    quantity: 0,
-    apikey: '',
-    exchange: '',
-    product: '',
-    strategy: '',
-    pricetype: '',
-  });
+  const [order, setOrder] = useState<TradeDetails>(DEFAULT_ORDER_DETAILS);
 
   const [response, setResponse] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-
-  const handleChange = (field: string, value: any) => {
-    setOrder((prev: any) => ({ ...prev, [field]: value }));
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,7 +54,7 @@ export function PlaceOrder({ index }: Props) {
 
   // Handle section title change
   const handleOrderChange = useCallback(
-    (index: number, field: string, value: any) => {
+    (field: string, value: any) => {
       const updatedOrders = [...orders];
       let val = value;
 
@@ -78,9 +65,11 @@ export function PlaceOrder({ index }: Props) {
       if (field === 'pricetype' && !value) {
         val === priceTypes.MARKET;
       }
-
-      updatedOrders[index][field] = value;
+      console.log('val', val);
+      updatedOrders[index][field] = val;
+      console.log(updatedOrders[index][field]);
       setOrders(updatedOrders);
+      return updatedOrders;
     },
     [orders, setOrders]
   );
@@ -95,14 +84,24 @@ export function PlaceOrder({ index }: Props) {
     console.log('LX clicked');
   };
 
-  const renderPriceInput = (index: number, order: any) => {
+  useEffect(() => {
+    if (orders[index]) {
+      setOrder(orders[index]);
+    }
+    return () => {
+      setOrder(DEFAULT_ORDER_DETAILS);
+    }
+  }, [orders]);
+
+
+  const renderPriceInput = () => {
     return (
       <IonCol size='12'>
         <IonInput
           type='number'
           value={order.price}
           onIonChange={(e) =>
-            handleOrderChange(index, 'price', parseFloat(e.detail.value!))
+            handleOrderChange('price', parseFloat(e.detail.value!))
           }
           label='Price'
           labelPlacement='floating'
@@ -130,7 +129,7 @@ export function PlaceOrder({ index }: Props) {
                   type='text'
                   value={order.symbol}
                   onIonChange={(e) =>
-                    handleOrderChange(index, 'symbol', e.detail.value!)
+                    handleOrderChange('symbol', e.detail.value!)
                   }
                   label='Symbol'
                   labelPlacement='floating'
@@ -143,7 +142,7 @@ export function PlaceOrder({ index }: Props) {
                 <IonSelect
                   value={order.exchange}
                   onIonChange={(e) =>
-                    handleOrderChange(index, 'exchange', e.detail.value)
+                    handleOrderChange('exchange', e.detail.value)
                   }
                   label='Exchange'
                   labelPlacement='floating'
@@ -165,7 +164,6 @@ export function PlaceOrder({ index }: Props) {
                   max={200}
                   onIonChange={(e) =>
                     handleOrderChange(
-                      index,
                       'quantity',
                       parseInt(e.detail.value!, 10)
                     )
@@ -183,20 +181,19 @@ export function PlaceOrder({ index }: Props) {
                   allowEmptySelection={true}
                   onClick={(e) =>
                     handleOrderChange(
-                      index,
                       'product',
                       order.product === productsType.MIS
                         ? productsType.NRML
                         : productsType.MIS
                     )
                   }
-                  // onIonChange={(e) =>
-                  //   handleOrderChange(
-                  //     index,
-                  //     'product',
-                  //     e.detail.value
-                  //   )
-                  // }
+                // onIonChange={(e) =>
+                //   handleOrderChange(
+                //     index,
+                //     'product',
+                //     e.detail.value
+                //   )
+                // }
                 >
                   <IonItem lines='none'>
                     <IonLabel>NRML</IonLabel>
@@ -209,22 +206,19 @@ export function PlaceOrder({ index }: Props) {
                 <IonRadioGroup
                   value={order.pricetype}
                   allowEmptySelection={true}
-                  onClick={(e) =>
+                  onIonChange={(e) =>
                     handleOrderChange(
-                      index,
                       'pricetype',
-                      order.pricetype === priceTypes.LIMIT
-                        ? priceTypes.MARKET
-                        : priceTypes.LIMIT
+                      e.detail.value
                     )
                   }
-                  // onIonChange={(e) =>
-                  //   handleOrderChange(
-                  //     index,
-                  //     'pricetype',
-                  //     e.detail.value
-                  //   )
-                  // }
+                // onIonChange={(e) =>
+                //   handleOrderChange(
+                //     index,
+                //     'pricetype',
+                //     e.detail.value
+                //   )
+                // }
                 >
                   <IonItem lines='none'>
                     <IonLabel>Limit</IonLabel>
@@ -233,7 +227,7 @@ export function PlaceOrder({ index }: Props) {
                 </IonRadioGroup>
               </IonCol>
 
-              {order.pricetype === 'LIMIT' && renderPriceInput(index, order)}
+              {order.pricetype === 'LIMIT' && renderPriceInput()}
             </IonRow>
 
             {/* Third Row */}

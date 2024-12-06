@@ -45,7 +45,7 @@ import './theme/variables.css';
 
 /* Internal Pages */
 import AppLayout from './components/templates/AppLayout';
-import { AppContextProvider } from '@contexts/AppContext';
+import { OrdersProvider } from '@contexts/Orders';
 
 setupIonicReact({
   rippleEffect: false
@@ -53,9 +53,9 @@ setupIonicReact({
 
 const App: React.FC = () => (
   <IonApp>
-    <AppContextProvider>
+    <OrdersProvider>
       <AppLayout />
-    </AppContextProvider>
+    </OrdersProvider>
   </IonApp>
 );
 

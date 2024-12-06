@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, ReactNode, useCallback, useMemo, useEffect } from 'react';
 import * as OrderServices from '@services/Orders';
 import { TradeDetails } from '@utils/interface';
-import { actions, exchanges, priceTypes, productsType } from '@utils/constant';
+import { actions, DEFAULT_ORDER_DETAILS, exchanges, priceTypes, productsType } from '@utils/constant';
 
 interface OrdersContextProps {
   placeOrder: (tradeDetails: TradeDetails) => Promise<string | any>;
@@ -23,7 +23,7 @@ interface OrdersContextProps {
   setOrders: React.Dispatch<React.SetStateAction<Array<any>>>;
 }
 
-const OrdersContext = createContext<OrdersContextProps | undefined>(undefined);
+export const OrdersContext = createContext<OrdersContextProps | undefined>(undefined);
 
 interface OrdersProviderProps {
   children: ReactNode;
@@ -88,31 +88,21 @@ export const OrdersProvider: React.FC<OrdersProviderProps> = ({ children }) => {
     [setOrders]
   );
 
-
-  const addOrder = () => {
-    console.log("Add Order");
-    
-    const allOrders = orders;
-    allOrders.push({
-      symbol: '',
-      action: actions.BUY,
-      exchange: exchanges.NSE,
-      quantity: 25,
-      product: productsType.MIS,
-      pricetype: priceTypes.MARKET,
-      price: 0,
+  const addOrder = useCallback(() => {
+    setOrders([...orders, {
+      ...DEFAULT_ORDER_DETAILS,
       apikey: apiKey,
       strategy: strategy,
       apiUrl: apiUrl,
-    });
-    setOrders(allOrders);
-  };
+    }]);
+    return orders;
+  }, [orders, setOrders]);
 
-
-  const deleteOrder = (index: number) => {
+  const deleteOrder = useCallback((index: number) => {
     const newOrders = orders.filter((_, i) => i !== index);
     setOrders(newOrders);
-  };
+    return newOrders;
+  }, [orders, setOrders]);
 
 
   // Hooks
@@ -144,7 +134,7 @@ export const OrdersProvider: React.FC<OrdersProviderProps> = ({ children }) => {
   // Save data to local storage
   useEffect(() => {
     console.log("Save data to local storage");
-    
+
     localStorage.setItem('apiUrl', apiUrl);
     localStorage.setItem('apiKey', apiKey);
     localStorage.setItem('strategy', strategy);
@@ -211,6 +201,8 @@ export const OrdersProvider: React.FC<OrdersProviderProps> = ({ children }) => {
     </OrdersContext.Provider>
   );
 };
+
+// export const useOrders = (): any => useContext(OrdersContext);
 
 export const useOrders = (): OrdersContextProps => {
   const context = useContext(OrdersContext);

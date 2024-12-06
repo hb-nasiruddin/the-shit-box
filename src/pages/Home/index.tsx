@@ -27,32 +27,9 @@ export const HomePage: React.FC = () => {
 
   // Context
   const {
-    apiKey,
-    strategy,
-    apiUrl,
     orders,
-    setOrders,
+    addOrder,
   } = useOrders();
-
-
-  const addOrder = () => {
-    console.log("Add Order");
-
-    const allOrders = orders;
-    allOrders.push({
-      symbol: '',
-      action: actions.BUY,
-      exchange: exchanges.NSE,
-      quantity: 25,
-      product: productsType.MIS,
-      pricetype: priceTypes.MARKET,
-      price: 0,
-      apikey: apiKey,
-      strategy: strategy,
-      apiUrl: apiUrl,
-    });
-    setOrders(allOrders);
-  };
 
 
   return (
@@ -82,13 +59,14 @@ export const HomePage: React.FC = () => {
 
         <HostInfo />
 
-        {JSON.stringify(orders)}
-
         <IonGrid>
           <IonRow className='ion-no-padding ion-align-items-center'>
-            {orders.map((orderItem, index) => (
-              <PlaceOrder key={`order-card-${index}`} index={index} />
-            ))}
+            {orders.map((orderItem, index) => {
+              console.log(orderItem);
+              return (
+                <PlaceOrder key={`order-card-${index}`} index={index} />
+              )
+            })}
           </IonRow>
         </IonGrid>
       </IonContent>
