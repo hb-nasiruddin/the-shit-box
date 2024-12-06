@@ -20,7 +20,7 @@ import { add, trashBin, removeSharp } from 'ionicons/icons';
 import { TradeDetails } from '@utils/interface';
 import { placeOrder } from '@services/Orders';
 import { useOrders } from '@contexts/Orders';
-import { DEFAULT_ORDER_DETAILS, priceTypes, productsType } from '@utils/constant';
+import { actions, DEFAULT_ORDER_DETAILS, priceTypes, productsType } from '@utils/constant';
 
 type Props = {
   index: number;
@@ -74,9 +74,18 @@ export function PlaceOrder({ index }: Props) {
     [orders, setOrders]
   );
 
-  // On LE Click event
-  const onLEClick = () => {
+  // On LE Click event trigger placeOrder
+  const onLEClick = async () => {
     console.log('LE clicked');
+    try {
+      const result = await placeOrder({
+        ...order,
+        action: actions.BUY,
+      });
+
+    } catch (error) {
+      console.log('Error onLEClick', error);
+    }
   };
 
   // On LX Click event
@@ -187,13 +196,6 @@ export function PlaceOrder({ index }: Props) {
                         : productsType.MIS
                     )
                   }
-                // onIonChange={(e) =>
-                //   handleOrderChange(
-                //     index,
-                //     'product',
-                //     e.detail.value
-                //   )
-                // }
                 >
                   <IonItem lines='none'>
                     <IonLabel>NRML</IonLabel>
@@ -206,19 +208,12 @@ export function PlaceOrder({ index }: Props) {
                 <IonRadioGroup
                   value={order.pricetype}
                   allowEmptySelection={true}
-                  onIonChange={(e) =>
+                  onClick={(e) =>
                     handleOrderChange(
                       'pricetype',
-                      e.detail.value
+                      order.pricetype === priceTypes.MARKET ? priceTypes.LIMIT : priceTypes.MARKET
                     )
                   }
-                // onIonChange={(e) =>
-                //   handleOrderChange(
-                //     index,
-                //     'pricetype',
-                //     e.detail.value
-                //   )
-                // }
                 >
                   <IonItem lines='none'>
                     <IonLabel>Limit</IonLabel>
@@ -230,33 +225,41 @@ export function PlaceOrder({ index }: Props) {
               {order.pricetype === 'LIMIT' && renderPriceInput()}
             </IonRow>
 
-            {/* Third Row */}
             <IonRow>
-              <IonCol>
-                <IonButton
-                  expand='block'
-                  color='success'
-                  onClick={() => onLEClick()}
-                >
-                  <IonIcon icon={add} slot='start' />
-                  LE
-                </IonButton>
-              </IonCol>
-              <IonCol>
-                <IonButton
-                  expand='block'
-                  color='danger'
-                  onClick={() => onLXClick()}
-                >
-                  <IonIcon icon={removeSharp} slot='start' />
-                  LX
-                </IonButton>
-              </IonCol>
+              {
+                !order.orderid && (
+                  <IonCol>
+                    <IonButton
+                      expand='block'
+                      color='success'
+                      onClick={() => onLEClick()}
+                    >
+                      <IonIcon icon={add} slot='start' />
+                      LE
+                    </IonButton>
+                  </IonCol>
+                )
+              }
+              {
+                order.orderid && (
+                  <IonCol>
+                    <IonButton
+                      expand='block'
+                      color='danger'
+                      onClick={() => onLXClick()}
+                    >
+                      <IonIcon icon={removeSharp} slot='start' />
+                      LX
+                    </IonButton>
+                  </IonCol>
+                )
+              }
               <IonCol>
                 <IonButton
                   expand='block'
                   color='secondary'
                   onClick={() => deleteOrder(index)}
+                  disabled={!!order.orderid}
                 >
                   <IonIcon icon={trashBin} slot='start' />
                 </IonButton>
