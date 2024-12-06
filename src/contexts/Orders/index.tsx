@@ -1,14 +1,14 @@
 import React, { createContext, useContext, useState, ReactNode, useCallback, useMemo, useEffect } from 'react';
 import * as OrderServices from '@services/Orders';
-import { TradeDetails } from '@utils/interface';
-import { actions, DEFAULT_ORDER_DETAILS, exchanges, priceTypes, productsType } from '@utils/constant';
+import { TradeDetails, TradeResponse } from '@utils/interface';
+import { DEFAULT_ORDER_DETAILS } from '@utils/constant';
 
 interface OrdersContextProps {
-  placeOrder: (tradeDetails: TradeDetails) => Promise<string | any>;
-  modifyOrder: (modifyDetails: TradeDetails) => Promise<string | any>;
-  cancelOrder: (cancelDetails: TradeDetails) => Promise<string | any>;
-  closePosition: (closeDetails: TradeDetails) => Promise<string | any>;
-  cancelAllOrders: (cancelDetails: TradeDetails) => Promise<string | any>;
+  placeOrder: (index: number, tradeDetails: TradeDetails) => Promise<TradeResponse | any>;
+  modifyOrder: (modifyDetails: TradeDetails) => Promise<TradeResponse | any>;
+  cancelOrder: (cancelDetails: TradeDetails) => Promise<TradeResponse | any>;
+  closePosition: (closeDetails: TradeDetails) => Promise<TradeResponse | any>;
+  cancelAllOrders: (cancelDetails: TradeDetails) => Promise<TradeResponse | any>;
 
   addOrder: () => void;
   deleteOrder: (index: number) => void;
@@ -38,13 +38,15 @@ export const OrdersProvider: React.FC<OrdersProviderProps> = ({ children }) => {
 
   // Service functions using useCallback
   const placeOrder = useCallback(
-    async (tradeDetails: TradeDetails) => {
+    async (index: number, tradeDetails: TradeDetails) => {
       try {
         const data = await OrderServices.placeOrder(tradeDetails);
         console.log("Order Placed data", data);
         // Update orders state on successful order placement
-        // setOrders((prevOrders) => [...prevOrders, { ...tradeDetails, data }]);
-        return data;
+        const updatedOrders = [...orders];
+        updatedOrders[index] = { ...updatedOrders[index], orderid: data.orderid };
+
+        return updatedOrders;
       } catch (error) {
         console.log("Error placing order", error);
       }

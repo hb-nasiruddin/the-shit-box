@@ -17,4 +17,12 @@ interface TradeDetails {
   disclosed_quantity?: string;
 }
 
-export type { TradeDetails };
+interface TradeResponse {
+  orderid?: string;
+  message?: string;
+  canceled_orders?: string[];
+  failed_cancellations?: string[];
+  status: string;
+}
+
+export type { TradeDetails, TradeResponse };

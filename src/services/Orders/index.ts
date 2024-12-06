@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { TradeDetails } from '@utils/interface';
+import { TradeDetails, TradeResponse } from '@utils/interface';
 
 /**
  * Place a smart order
@@ -11,11 +11,11 @@ import { TradeDetails } from '@utils/interface';
  * @param {string} tradeDetails.product - Product type (e.g., MIS, CNC)
  * @param {string} tradeDetails.quantity - Order quantity
  * @param {string} tradeDetails.apiUrl - API host URL
- * @returns {Promise<string>} - API response
+ * @returns {Promise<TradeResponse>} - API response
  */
 export const placeOrder = async (
   tradeDetails: TradeDetails
-): Promise<string> => {
+): Promise<TradeResponse> => {
   try {
     const endpoint = `${tradeDetails.apiUrl}/api/v1/placesmartorder`;
 
@@ -56,11 +56,11 @@ export const placeOrder = async (
  * @param {string} modifyDetails.orderid - ID of the order to modify
  * @param {number} modifyDetails.price - New price
  * @param {string} modifyDetails.apiUrl - API host URL
- * @returns {Promise<string>} - API response
+ * @returns {Promise<TradeResponse>} - API response
  */
 export const modifyOrder = async (
   modifyDetails: TradeDetails
-): Promise<string> => {
+): Promise<TradeResponse> => {
   try {
     const endpoint = `${modifyDetails.apiUrl}/api/v1/modifyorder`;
     const payload = {
@@ -85,11 +85,11 @@ export const modifyOrder = async (
  * @param {string} cancelDetails.apikey - API Key for authentication
  * @param {string} cancelDetails.orderid - ID of the order to cancel
  * @param {string} cancelDetails.apiUrl - API host URL
- * @returns {Promise<string>} - API response
+ * @returns {Promise<TradeResponse>} - API response
  */
 export const cancelOrder = async (
   cancelDetails: TradeDetails
-): Promise<string> => {
+): Promise<TradeResponse> => {
   try {
     const endpoint = `${cancelDetails.apiUrl}/api/v1/cancelorder`;
     const payload = {
@@ -114,9 +114,11 @@ export const cancelOrder = async (
  * @param {string} closeDetails.symbol - Trading symbol
  * @param {string} closeDetails.exchange - Exchange (e.g., NSE, BSE)
  * @param {string} closeDetails.apiUrl - API host URL
- * @returns {Promise<string>} - API response
+ * @returns {Promise<TradeResponse>} - API response
  */
-export const closePosition = async (closeDetails: TradeDetails): Promise<string> => {
+export const closePosition = async (
+  closeDetails: TradeDetails
+): Promise<TradeResponse> => {
   try {
     const endpoint = `${closeDetails.apiUrl}/api/v1/closeposition`;
     const payload = {
@@ -140,9 +142,11 @@ export const closePosition = async (closeDetails: TradeDetails): Promise<string>
  * @param {object} cancelDetails - Details for canceling all orders
  * @param {string} cancelDetails.apikey - API Key for authentication
  * @param {string} cancelDetails.apiUrl - API host URL
- * @returns {Promise<string>} - API response
+ * @returns {Promise<TradeResponse>} - API response
  */
-export const cancelAllOrders = async (cancelDetails: TradeDetails): Promise<string> => {
+export const cancelAllOrders = async (
+  cancelDetails: TradeDetails
+): Promise<TradeResponse> => {
   try {
     const endpoint = `${cancelDetails.apiUrl}/api/v1/cancelallorders`;
     const payload = {

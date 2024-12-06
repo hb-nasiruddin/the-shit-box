@@ -3,6 +3,7 @@ import {
   IonButton,
   IonCard,
   IonCardContent,
+  IonChip,
   IonCol,
   IonGrid,
   IonIcon,
@@ -17,10 +18,9 @@ import {
 } from '@ionic/react';
 import { add, trashBin, removeSharp } from 'ionicons/icons';
 
-import { TradeDetails } from '@utils/interface';
-import { placeOrder } from '@services/Orders';
-import { useOrders } from '@contexts/Orders';
 import { actions, DEFAULT_ORDER_DETAILS, priceTypes, productsType } from '@utils/constant';
+import { TradeDetails, TradeResponse } from '@utils/interface';
+import { useOrders } from '@contexts/Orders';
 
 type Props = {
   index: number;
@@ -30,27 +30,14 @@ export function PlaceOrder({ index }: Props) {
   const {
     orders,
     setOrders,
-
+    placeOrder,
     deleteOrder,
   } = useOrders();
 
   const [order, setOrder] = useState<TradeDetails>(DEFAULT_ORDER_DETAILS);
 
-  const [response, setResponse] = useState<string | null>(null);
+  const [response, setResponse] = useState<TradeResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    setResponse(null);
-
-    try {
-      const result = await placeOrder(order);
-      setResponse(result);
-    } catch (error: any) {
-      setError(error.message);
-    }
-  };
 
   // Handle section title change
   const handleOrderChange = useCallback(
@@ -78,19 +65,28 @@ export function PlaceOrder({ index }: Props) {
   const onLEClick = async () => {
     console.log('LE clicked');
     try {
-      const result = await placeOrder({
+      const result = await placeOrder(index, {
         ...order,
         action: actions.BUY,
       });
-
+      setResponse(result);
     } catch (error) {
       console.log('Error onLEClick', error);
     }
   };
 
   // On LX Click event
-  const onLXClick = () => {
+  const onLXClick = async () => {
     console.log('LX clicked');
+    try {
+      const result = await placeOrder(index, {
+        ...order,
+        action: actions.BUY,
+      });
+      setResponse(result);
+    } catch (error) {
+      console.log('Error onLXClick', error);
+    }
   };
 
   useEffect(() => {
@@ -132,6 +128,13 @@ export function PlaceOrder({ index }: Props) {
       <IonCard className='ion-margin-vertical'>
         <IonCardContent className='ion-no-padding'>
           <IonGrid>
+            {order.orderid && <IonRow className='ion-no-padding ion-align-items-start'>
+              <IonCol>
+                <IonChip>
+                  {order.orderid}
+                </IonChip>
+              </IonCol>
+            </IonRow>}
             <IonRow className='ion-no-padding ion-align-items-center'>
               <IonCol size='8'>
                 <IonInput
