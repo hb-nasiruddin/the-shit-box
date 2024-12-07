@@ -17,9 +17,9 @@ export const placeOrder = async (
   tradeDetails: TradeDetails
 ): Promise<TradeResponse> => {
   try {
-    const endpoint = `${tradeDetails.apiUrl}/api/v1/placesmartorder`;
+    const endpoint = `${tradeDetails.apiUrl}/api/v1/placeorder`;
 
-    const payload = {
+    let payload: TradeDetails = {
       apikey: tradeDetails.apikey,
       strategy: tradeDetails.strategy,
       exchange: tradeDetails.exchange,
@@ -27,9 +27,12 @@ export const placeOrder = async (
       action: tradeDetails.action,
       product: tradeDetails.product,
       pricetype: tradeDetails.pricetype,
-      quantity: tradeDetails.quantity,
-      price: tradeDetails.price,
+      quantity: `${tradeDetails.quantity}`,
     };
+    if (tradeDetails.pricetype === 'LIMIT') {
+      if (!tradeDetails.price || Number(tradeDetails.price) <= 0) throw new Error('Price must be greater than 0 for LIMIT orders');
+      payload.price = `${tradeDetails.price}`;
+    }
 
     const response = await axios.post(endpoint, payload, {
       timeout: 30000, // 30 seconds timeout
@@ -66,7 +69,7 @@ export const modifyOrder = async (
     const payload = {
       apikey: modifyDetails.apikey,
       orderid: modifyDetails.orderid,
-      price: modifyDetails.price,
+      price: `${modifyDetails.price}`,
     };
 
     const response = await axios.post(endpoint, payload, {

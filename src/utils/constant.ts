@@ -34,7 +34,7 @@ export const actions = {
 export const DEFAULT_ORDER_DETAILS = {
   symbol: '',
   action: actions.BUY,
-  exchange: exchanges.NSE,
+  exchange: exchanges.NFO,
   quantity: 25,
   product: productsType.MIS,
   pricetype: priceTypes.MARKET,
