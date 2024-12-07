@@ -3,6 +3,9 @@
   "integrations": {
     "capacitor": {}
   },
+  "config": {
+    "rippleEffect": false
+  },
   "type": "react-vite",
   "id": "4950a7a5"
 }
